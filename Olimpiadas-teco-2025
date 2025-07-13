@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Olimpiadas Teco - Cluster R7-R8 PBA Norte</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Montserrat', sans-serif; 
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        const SalesDashboard = () => {
+            const [selectedMonth, setSelectedMonth] = useState('2025-06');
+            const [showOlympicMedallero, setShowOlympicMedallero] = useState(false);
+
+            // Avatares únicos por vendedor
+            const getAvatar = (name) => {
+                const avatares = {
+                    'Gabriela Baez': '👩‍💼',
+                    'Karina Minadeo': '👩🏻‍💻',
+                    'Ludmila Canziani': '👩🏽‍💼',
+                    'Dulce Druetta': '👩🏼‍💻',
+                    'Jorgelina Gonzalez': '👩🏻‍💼',
+                    'Veronica Gonzalez': '👩🏾‍💻',
+                    'Natalia Nievas': '👩🏻‍💻',
+                    'Gabriel Forte': '👨‍💼',
+                    'German Iagrossi': '👨🏻‍💻'
+                };
+                return avatares[name] || '👤';
+            };
+
+            // Datos reales del Excel
+            const salesData = {
+                '2025-03': [
+                    { id: 1, name: 'Gabriela Baez', kpis: { porta: 9, altaAbono: 9, capro: 2, caplan: 3, terminales: 16, proteccionPersonal: 13, accesorios: 2, smarthome: 6, altaInternet: 7, altaCatv: 17, flowFull: 0 } },
+                    { id: 2, name: 'Karina Minadeo', kpis: { porta: 1, altaAbono: 2, capro: 0, caplan: 0, terminales: 4, proteccionPersonal: 4, accesorios: 0, smarthome: 0, altaInternet: 4, altaCatv: 7, flowFull: 0 } },
+                    { id: 3, name: 'Ludmila Canziani', kpis: { porta: 31, altaAbono: 7, capro: 6, caplan: 25, terminales: 5, proteccionPersonal: 4, accesorios: 3, smarthome: 12, altaInternet: 31, altaCatv: 15, flowFull: 0 } },
+                    { id: 4, name: 'Gabriel Forte', kpis: { porta: 5, altaAbono: 4, capro: 1, caplan: 27, terminales: 6, proteccionPersonal: 6, accesorios: 4, smarthome: 6, altaInternet: 30, altaCatv: 13, flowFull: 0 } },
+                    { id: 5, name: 'Dulce Druetta', kpis: { porta: 14, altaAbono: 4, capro: 6, caplan: 29, terminales: 5, proteccionPersonal: 5, accesorios: 3, smarthome: 8, altaInternet: 18, altaCatv: 21, flowFull: 0 } },
+                    { id: 6, name: 'German Iagrossi', kpis: { porta: 8, altaAbono: 2, capro: 1, caplan: 0, terminales: 7, proteccionPersonal: 7, accesorios: 6, smarthome: 0, altaInternet: 20, altaCatv: 16, flowFull: 0 } },
+                    { id: 7, name: 'Jorgelina Gonzalez', kpis: { porta: 4, altaAbono: 5, capro: 0, caplan: 2, terminales: 5, proteccionPersonal: 5, accesorios: 3, smarthome: 0, altaInternet: 12, altaCatv: 5, flowFull: 0 } },
+                    { id: 8, name: 'Veronica Gonzalez', kpis: { porta: 3, altaAbono: 1, capro: 0, caplan: 1, terminales: 7, proteccionPersonal: 7, accesorios: 3, smarthome: 0, altaInternet: 13, altaCatv: 10, flowFull: 0 } },
+                    { id: 9, name: 'Natalia Nievas', kpis: { porta: 3, altaAbono: 2, capro: 3, caplan: 9, terminales: 6, proteccionPersonal: 6, accesorios: 3, smarthome: 0, altaInternet: 16, altaCatv: 12, flowFull: 0 } }
+                ],
+                '2025-04': [
+                    { id: 1, name: 'Gabriela Baez', kpis: { porta: 21, altaAbono: 7, capro: 1, caplan: 10, terminales: 22, proteccionPersonal: 22, accesorios: 8, smarthome: 0, altaInternet: 10, altaCatv: 14, flowFull: 0 } },
+                    { id: 2, name: 'Karina Minadeo', kpis: { porta: 11, altaAbono: 1, capro: 0, caplan: 0, terminales: 5, proteccionPersonal: 5, accesorios: 4, smarthome: 0, altaInternet: 9, altaCatv: 11, flowFull: 0 } },
+                    { id: 3, name: 'Ludmila Canziani', kpis: { porta: 25, altaAbono: 9, capro: 7, caplan: 25, terminales: 12, proteccionPersonal: 11, accesorios: 11, smarthome: 8, altaInternet: 26, altaCatv: 21, flowFull: 0 } },
+                    { id: 4, name: 'Gabriel Forte', kpis: { porta: 9, altaAbono: 7, capro: 2, caplan: 18, terminales: 7, proteccionPersonal: 5, accesorios: 4, smarthome: 2, altaInternet: 25, altaCatv: 19, flowFull: 1 } },
+                    { id: 5, name: 'Dulce Druetta', kpis: { porta: 16, altaAbono: 9, capro: 8, caplan: 27, terminales: 5, proteccionPersonal: 4, accesorios: 5, smarthome: 6, altaInternet: 21, altaCatv: 19, flowFull: 0 } },
+                    { id: 6, name: 'German Iagrossi', kpis: { porta: 9, altaAbono: 3, capro: 0, caplan: 1, terminales: 9, proteccionPersonal: 7, accesorios: 9, smarthome: 0, altaInternet: 31, altaCatv: 29, flowFull: 0 } },
+                    { id: 7, name: 'Jorgelina Gonzalez', kpis: { porta: 9, altaAbono: 2, capro: 0, caplan: 0, terminales: 5, proteccionPersonal: 5, accesorios: 5, smarthome: 0, altaInternet: 47, altaCatv: 17, flowFull: 0 } },
+                    { id: 8, name: 'Veronica Gonzalez', kpis: { porta: 14, altaAbono: 0, capro: 2, caplan: 2, terminales: 7, proteccionPersonal: 6, accesorios: 5, smarthome: 0, altaInternet: 22, altaCatv: 5, flowFull: 1 } },
+                    { id: 9, name: 'Natalia Nievas', kpis: { porta: 12, altaAbono: 4, capro: 0, caplan: 5, terminales: 6, proteccionPersonal: 6, accesorios: 3, smarthome: 0, altaInternet: 23, altaCatv: 10, flowFull: 0 } }
+                ],
+                '2025-05': [
+                    { id: 1, name: 'Gabriela Baez', kpis: { porta: 20, altaAbono: 5, capro: 2, caplan: 3, terminales: 17, proteccionPersonal: 11, accesorios: 5, smarthome: 2, altaInternet: 7, altaCatv: 10, flowFull: 0 } },
+                    { id: 2, name: 'Karina Minadeo', kpis: { porta: 18, altaAbono: 3, capro: 0, caplan: 2, terminales: 8, proteccionPersonal: 8, accesorios: 7, smarthome: 0, altaInternet: 6, altaCatv: 15, flowFull: 0 } },
+                    { id: 3, name: 'Ludmila Canziani', kpis: { porta: 31, altaAbono: 5, capro: 5, caplan: 21, terminales: 11, proteccionPersonal: 9, accesorios: 4, smarthome: 9, altaInternet: 21, altaCatv: 18, flowFull: 0 } },
+                    { id: 4, name: 'Gabriel Forte', kpis: { porta: 17, altaAbono: 1, capro: 2, caplan: 23, terminales: 7, proteccionPersonal: 7, accesorios: 4, smarthome: 18, altaInternet: 20, altaCatv: 12, flowFull: 0 } },
+                    { id: 5, name: 'Dulce Druetta', kpis: { porta: 21, altaAbono: 8, capro: 6, caplan: 21, terminales: 9, proteccionPersonal: 9, accesorios: 6, smarthome: 18, altaInternet: 20, altaCatv: 22, flowFull: 0 } },
+                    { id: 6, name: 'German Iagrossi', kpis: { porta: 9, altaAbono: 3, capro: 0, caplan: 0, terminales: 7, proteccionPersonal: 4, accesorios: 6, smarthome: 3, altaInternet: 39, altaCatv: 19, flowFull: 0 } },
+                    { id: 7, name: 'Jorgelina Gonzalez', kpis: { porta: 12, altaAbono: 2, capro: 1, caplan: 1, terminales: 4, proteccionPersonal: 4, accesorios: 6, smarthome: 4, altaInternet: 28, altaCatv: 10, flowFull: 0 } },
+                    { id: 8, name: 'Veronica Gonzalez', kpis: { porta: 12, altaAbono: 2, capro: 0, caplan: 1, terminales: 5, proteccionPersonal: 3, accesorios: 4, smarthome: 2, altaInternet: 30, altaCatv: 9, flowFull: 2 } },
+                    { id: 9, name: 'Natalia Nievas', kpis: { porta: 12, altaAbono: 2, capro: 1, caplan: 1, terminales: 7, proteccionPersonal: 5, accesorios: 4, smarthome: 8, altaInternet: 28, altaCatv: 12, flowFull: 0 } }
+                ],
+                '2025-06': [
+                    { id: 1, name: 'Gabriela Baez', kpis: { porta: 7, altaAbono: 1, capro: 0, caplan: 1, terminales: 13, proteccionPersonal: 8, accesorios: 6, smarthome: 11, altaInternet: 4, altaCatv: 11, flowFull: 0 } },
+                    { id: 2, name: 'Karina Minadeo', kpis: { porta: 4, altaAbono: 3, capro: 1, caplan: 4, terminales: 10, proteccionPersonal: 10, accesorios: 6, smarthome: 9, altaInternet: 4, altaCatv: 10, flowFull: 0 } },
+                    { id: 3, name: 'Ludmila Canziani', kpis: { porta: 24, altaAbono: 8, capro: 7, caplan: 28, terminales: 13, proteccionPersonal: 10, accesorios: 9, smarthome: 16, altaInternet: 26, altaCatv: 22, flowFull: 0 } },
+                    { id: 4, name: 'Gabriel Forte', kpis: { porta: 20, altaAbono: 4, capro: 2, caplan: 12, terminales: 6, proteccionPersonal: 4, accesorios: 4, smarthome: 17, altaInternet: 11, altaCatv: 11, flowFull: 0 } },
+                    { id: 5, name: 'Dulce Druetta', kpis: { porta: 23, altaAbono: 8, capro: 5, caplan: 28, terminales: 11, proteccionPersonal: 10, accesorios: 10, smarthome: 14, altaInternet: 17, altaCatv: 15, flowFull: 0 } },
+                    { id: 6, name: 'German Iagrossi', kpis: { porta: 10, altaAbono: 6, capro: 1, caplan: 8, terminales: 5, proteccionPersonal: 3, accesorios: 5, smarthome: 10, altaInternet: 23, altaCatv: 22, flowFull: 2 } },
+                    { id: 7, name: 'Jorgelina Gonzalez', kpis: { porta: 12, altaAbono: 4, capro: 0, caplan: 0, terminales: 8, proteccionPersonal: 7, accesorios: 8, smarthome: 6, altaInternet: 19, altaCatv: 9, flowFull: 2 } },
+                    { id: 8, name: 'Veronica Gonzalez', kpis: { porta: 11, altaAbono: 3, capro: 1, caplan: 2, terminales: 8, proteccionPersonal: 7, accesorios: 7, smarthome: 4, altaInternet: 13, altaCatv: 9, flowFull: 3 } },
+                    { id: 9, name: 'Natalia Nievas', kpis: { porta: 14, altaAbono: 6, capro: 3, caplan: 6, terminales: 7, proteccionPersonal: 6, accesorios: 5, smarthome: 4, altaInternet: 18, altaCatv: 11, flowFull: 3 } }
+                ],
+                '2025-07': [
+                    { id: 1, name: 'Gabriela Baez', kpis: { porta: 3, altaAbono: 4, capro: 0, caplan: 1, terminales: 8, proteccionPersonal: 6, accesorios: 5, smarthome: 6, altaInternet: 0, altaCatv: 4, flowFull: 0 } },
+                    { id: 2, name: 'Karina Minadeo', kpis: { porta: 4, altaAbono: 1, capro: 0, caplan: 1, terminales: 3, proteccionPersonal: 3, accesorios: 2, smarthome: 5, altaInternet: 2, altaCatv: 5, flowFull: 0 } },
+                    { id: 3, name: 'Ludmila Canziani', kpis: { porta: 23, altaAbono: 2, capro: 4, caplan: 10, terminales: 3, proteccionPersonal: 3, accesorios: 1, smarthome: 10, altaInternet: 5, altaCatv: 5, flowFull: 0 } },
+                    { id: 4, name: 'Gabriel Forte', kpis: { porta: 0, altaAbono: 2, capro: 1, caplan: 5, terminales: 2, proteccionPersonal: 2, accesorios: 1, smarthome: 0, altaInternet: 5, altaCatv: 5, flowFull: 0 } },
+                    { id: 5, name: 'Dulce Druetta', kpis: { porta: 15, altaAbono: 2, capro: 4, caplan: 16, terminales: 6, proteccionPersonal: 6, accesorios: 5, smarthome: 4, altaInternet: 7, altaCatv: 7, flowFull: 1 } },
+                    { id: 6, name: 'German Iagrossi', kpis: { porta: 3, altaAbono: 1, capro: 0, caplan: 0, terminales: 1, proteccionPersonal: 0, accesorios: 1, smarthome: 0, altaInternet: 12, altaCatv: 15, flowFull: 1 } },
+                    { id: 7, name: 'Jorgelina Gonzalez', kpis: { porta: 5, altaAbono: 1, capro: 0, caplan: 1, terminales: 1, proteccionPersonal: 0, accesorios: 0, smarthome: 6, altaInternet: 10, altaCatv: 6, flowFull: 1 } },
+                    { id: 8, name: 'Veronica Gonzalez', kpis: { porta: 5, altaAbono: 0, capro: 0, caplan: 2, terminales: 3, proteccionPersonal: 3, accesorios: 1, smarthome: 0, altaInternet: 11, altaCatv: 9, flowFull: 2 } },
+                    { id: 9, name: 'Natalia Nievas', kpis: { porta: 1, altaAbono: 0, capro: 1, caplan: 5, terminales: 2, proteccionPersonal: 2, accesorios: 2, smarthome: 0, altaInternet: 6, altaCatv: 5, flowFull: 2 } }
+                ]
+            };
+
+            const kpiLabels = {
+                porta: 'Porta',
+                altaAbono: 'Alta Abono',
+                capro: 'Capro',
+                caplan: 'Caplan',
+                terminales: 'Terminales',
+                proteccionPersonal: 'Protección Personal',
+                accesorios: 'Accesorios',
+                smarthome: 'Smarthome',
+                altaInternet: 'Alta Internet',
+                altaCatv: 'Alta Catv',
+                flowFull: 'Flow Full registrado'
+            };
+
+            // Funciones auxiliares
+            const getRankings = (data, kpi) => {
+                const dataWithTotals = data.map(seller => ({
+                    ...seller,
+                    totalKpis: Object.values(seller.kpis).reduce((sum, value) => sum + value, 0)
+                }));
+
+                const sorted = [...dataWithTotals].sort((a, b) => {
+                    const kpiDiff = b.kpis[kpi] - a.kpis[kpi];
+                    if (kpiDiff === 0) {
+                        return b.totalKpis - a.totalKpis;
+                    }
+                    return kpiDiff;
+                });
+
+                const rankings = {};
+                sorted.forEach((seller, index) => {
+                    if (index < 3) {
+                        rankings[seller.id] = index + 1;
+                    }
+                });
+                return rankings;
+            };
+
+            const getMedalComponent = (rank) => {
+                const style = { width: '12px', height: '12px', display: 'inline-block' };
+                switch (rank) {
+                    case 1:
+                        return <span style={{...style, color: '#EAB308'}}>🏆</span>;
+                    case 2:
+                        return <span style={{...style, color: '#9CA3AF'}}>🥈</span>;
+                    case 3:
+                        return <span style={{...style, color: '#D97706'}}>🥉</span>;
+                    default:
+                        return null;
+                }
+            };
+
+            const getAccumulatedMedallero = () => {
+                const accumulated = {};
+                const allVendors = ['Gabriela Baez', 'Karina Minadeo', 'Ludmila Canziani', 'Gabriel Forte', 
+                                   'Dulce Druetta', 'German Iagrossi', 'Jorgelina Gonzalez', 'Veronica Gonzalez', 'Natalia Nievas'];
+                
+                allVendors.forEach(name => {
+                    accumulated[name] = { goldCount: 0, silverCount: 0, bronzeCount: 0, totalActivity: 0 };
+                });
+
+                Object.keys(salesData).forEach(month => {
+                    const monthData = salesData[month];
+                    
+                    monthData.forEach(seller => {
+                        const goldCount = Object.keys(seller.kpis).filter(kpi => getRankings(monthData, kpi)[seller.id] === 1).length;
+                        const silverCount = Object.keys(seller.kpis).filter(kpi => getRankings(monthData, kpi)[seller.id] === 2).length;
+                        const bronzeCount = Object.keys(seller.kpis).filter(kpi => getRankings(monthData, kpi)[seller.id] === 3).length;
+                        const totalActivity = Object.values(seller.kpis).reduce((sum, value) => sum + value, 0);
+                        
+                        accumulated[seller.name].goldCount += goldCount;
+                        accumulated[seller.name].silverCount += silverCount;
+                        accumulated[seller.name].bronzeCount += bronzeCount;
+                        accumulated[seller.name].totalActivity += totalActivity;
+                    });
+                });
+
+                return Object.entries(accumulated).map(([name, data]) => ({
+                    name,
+                    ...data,
+                    totalMedals: data.goldCount + data.silverCount + data.bronzeCount
+                }));
+            };
+
+            const currentData = salesData[selectedMonth] || [];
+
+            return (
+                <div style={{
+                    minHeight: '100vh',
+                    background: 'linear-gradient(135deg, #6B46C1 0%, #7C3AED 50%, #4338CA 100%)',
+                    padding: '24px',
+                    position: 'relative',
+                    fontFamily: 'Montserrat, sans-serif'
+                }}>
+                    <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
+                        {/* Header */}
+                        <div style={{ position: 'relative', marginBottom: '32px' }}>
+                            {/* Título a la izquierda */}
+                            <div style={{ position: 'absolute', left: '0', textAlign: 'center' }}>
+                                <h1 style={{ fontSize: '36px', fontWeight: 'bold', color: '#67E8F9', margin: '0' }}>
+                                    Olimpiadas
+                                </h1>
+                                <div style={{ fontSize: '36px', fontWeight: 'bold', color: '#67E8F9' }}>
+                                    Teco 🏆
+                                </div>
+                            </div>
+
+                            {/* Cluster centrado arriba */}
+                            <div style={{ textAlign: 'center', marginBottom: '12px' }}>
+                                <span style={{ fontSize: '18px', fontWeight: 'bold', color: 'white' }}>
+                                    CLUSTER R7-R8 PBA NORTE
+                                </span>
+                            </div>
+
+                            {/* Botón medallero centrado y filtro a la derecha */}
+                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative' }}>
+                                <button
+                                    onClick={() => setShowOlympicMedallero(!showOlympicMedallero)}
+                                    style={{
+                                        padding: '12px 24px',
+                                        background: 'linear-gradient(to right, #F59E0B, #D97706)',
+                                        color: 'white',
+                                        fontWeight: 'bold',
+                                        borderRadius: '12px',
+                                        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+                                        border: 'none',
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '12px',
+                                        fontSize: '16px',
+                                        transition: 'all 0.2s'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.target.style.background = 'linear-gradient(to right, #D97706, #B45309)';
+                                        e.target.style.transform = 'scale(1.05)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.target.style.background = 'linear-gradient(to right, #F59E0B, #D97706)';
+                                        e.target.style.transform = 'scale(1)';
+                                    }}
+                                >
+                                    <span style={{ fontSize: '20px' }}>🏅</span>
+                                    <span>Medallero Olímpico Acumulado 2025</span>
+                                </button>
+                                
+                                {/* Filtro a la derecha */}
+                                {!showOlympicMedallero && (
+                                    <div style={{ position: 'absolute', right: '0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                                        <label style={{
+                                            fontSize: '14px',
+                                            fontWeight: 'bold',
+                                            color: '#374151',
+                                            background: 'linear-gradient(to right, #DBEAFE, #E0E7FF)',
+                                            padding: '8px 12px',
+                                            borderRadius: '8px',
+                                            border: '1px solid #3B82F6'
+                                        }}>
+                                            🗓️ Filtrar por mes
+                                        </label>
+                                        <select
+                                            value={selectedMonth}
+                                            onChange={(e) => setSelectedMonth(e.target.value)}
+                                            style={{
+                                                padding: '12px 16px',
+                                                border: '2px solid #3B82F6',
+                                                borderRadius: '12px',
+                                                fontSize: '14px',
+                                                fontWeight: 'bold',
+                                                background: 'linear-gradient(to right, #DBEAFE, #E0E7FF)',
+                                                boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+                                                cursor: 'pointer'
+                                            }}
+                                        >
+                                            <option value="2025-03">🍂 Marzo 2025</option>
+                                            <option value="2025-04">🍂 Abril 2025</option>
+                                            <option value="2025-05">🍂 Mayo 2025</option>
+                                            <option value="2025-06">❄️ Junio 2025</option>
+                                            <option value="2025-07">❄️ Julio 2025</option>
+                                        </select>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Contenido principal */}
+                        {showOlympicMedallero ? (
+                            /* Vista del Medallero Olímpico */
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+                                <div style={{
+                                    background: 'linear-gradient(to right, #FEF3C7, #FDE68A, #FED7AA)',
+                                    borderRadius: '12px',
+                                    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                                    padding: '32px',
+                                    border: '4px solid #F59E0B',
+                                    maxWidth: '1152px',
+                                    margin: '0 auto'
+                                }}>
+                                    <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+                                        <h2 style={{
+                                            fontSize: '36px',
+                                            fontWeight: 'bold',
+                                            background: 'linear-gradient(to right, #D97706, #F59E0B)',
+                                            WebkitBackgroundClip: 'text',
+                                            WebkitTextFillColor: 'transparent',
+                                            marginBottom: '8px'
+                                        }}>
+                                            🏆 MEDALLERO OLÍMPICO 2025 🏆
+                                        </h2>
+                                        <p style={{ color: '#6B7280', fontSize: '18px', margin: '0' }}>
+                                            Clasificación general de todo el año
+                                        </p>
+                                    </div>
+                                    
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                                        {getAccumulatedMedallero()
+                                            .sort((a, b) => {
+                                                if (a.goldCount !== b.goldCount) return b.goldCount - a.goldCount;
+                                                if (a.silverCount !== b.silverCount) return b.silverCount - a.silverCount;
+                                                if (a.bronzeCount !== b.bronzeCount) return b.bronzeCount - a.bronzeCount;
+                                                return b.totalActivity - a.totalActivity;
+                                            })
+                                            .map((seller, index) => (
+                                                <div
+                                                    key={seller.name}
+                                                    style={{
+                                                        padding: '24px',
+                                                        borderRadius: '12px',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'space-between',
+                                                        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+                                                        background: index === 0 ? 'linear-gradient(to right, #FEF08A, #FEF3C7, #FEF3C7)' :
+                                                                   index === 1 ? 'linear-gradient(to right, #F3F4F6, #F9FAFB, #F9FAFB)' :
+                                                                   index === 2 ? 'linear-gradient(to right, #FED7AA, #FBBF24, #FDE68A)' :
+                                                                   'white',
+                                                        border: index === 0 ? '4px solid #F59E0B' :
+                                                               index === 1 ? '4px solid #9CA3AF' :
+                                                               index === 2 ? '4px solid #D97706' :
+                                                               '2px solid #E5E7EB'
+                                                    }}
+                                                >
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+                                                        <div style={{
+                                                            fontSize: '36px',
+                                                            fontWeight: 'bold',
+                                                            color: index === 0 ? '#B45309' :
+                                                                   index === 1 ? '#374151' :
+                                                                   index === 2 ? '#D97706' :
+                                                                   '#6B7280'
+                                                        }}>
+                                                            #{index + 1}
+                                                        </div>
+                                                        <div style={{
+                                                            width: '64px',
+                                                            height: '64px',
+                                                            borderRadius: '50%',
+                                                            background: 'white',
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'center',
+                                                            fontSize: '36px',
+                                                            border: '4px solid white',
+                                                            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
+                                                        }}>
+                                                            {getAvatar(seller.name)}
+                                                        </div>
+                                                        <div>
+                                                            <span style={{ fontWeight: 'bold', color: '#111827', fontSize: '24px' }}>
+                                                                {seller.name}
+                                                            </span>
+                                                            <div style={{ color: '#6B7280' }}>
+                                                                Actividad acumulada: {seller.totalActivity}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
+                                                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                                            <span style={{ fontSize: '32px' }}>🏆</span>
+                                                            <span style={{ fontWeight: 'bold', fontSize: '28px', color: '#D97706' }}>
+                                                                {seller.goldCount}
+                                                            </span>
+                                                        </div>
+                                                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                                            <span style={{ fontSize: '32px' }}>🥈</span>
+                                                            <span style={{ fontWeight: 'bold', fontSize: '28px', color: '#6B7280' }}>
+                                                                {seller.silverCount}
+                                                            </span>
+                                                        </div>
+                                                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                                            <span style={{ fontSize: '32px' }}>🥉</span>
+                                                            <span style={{ fontWeight: 'bold', fontSize: '28px', color: '#D97706' }}>
+                                                                {seller.bronzeCount}
+                                                            </span>
+                                                        </div>
+                                                        <div style={{
+                                                            marginLeft: '24px',
+                                                            color: '#6B7280',
+                                                            background: 'white',
+                                                            padding: '8px 16px',
+                                                            borderRadius: '9999px',
+                                                            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                                                        }}>
+                                                            <span style={{ fontWeight: 'bold' }}>Total: {seller.totalMedals}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                    </div>
+                                </div>
+                            </div>
+                        ) : (
+                            /* Vista normal del dashboard */
+                            <div>
+                                {/* Grid de Vendedores */}
+                                <div style={{
+                                    display: 'grid',
+                                    gridTemplateColumns: 'repeat(3, 1fr)',
+                                    gap: '12px'
+                                }}>
+                                    {currentData.map((seller) => (
+                                        <div
+                                            key={seller.id}
+                                            style={{
+                                                background: 'white',
+                                                borderRadius: '8px',
+                                                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                                                padding: '12px',
+                                                border: '2px solid #E5E7EB'
+                                            }}
+                                        >
+                                            {/* Header del vendedor */}
+                                            <div style={{ textAlign: 'center', marginBottom: '12px' }}>
+                                                <div style={{
+                                                    width: '64px',
+                                                    height: '64px',
+                                                    margin: '0 auto 8px',
+                                                    borderRadius: '50%',
+                                                    background: '#F3F4F6',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    fontSize: '28px'
+                                                }}>
+                                                    {getAvatar(seller.name)}
+                                                </div>
+                                                <h3 style={{
+                                                    fontSize: '14px',
+                                                    fontWeight: 'bold',
+                                                    color: '#111827',
+                                                    margin: '0'
+                                                }}>
+                                                    {seller.name}
+                                                </h3>
+                                            </div>
+
+                                            {/* KPIs List */}
+                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                                {Object.entries(seller.kpis).map(([kpi, value]) => {
+                                                    const rankings = getRankings(currentData, kpi);
+                                                    const rank = rankings[seller.id];
+                                                    return (
+                                                        <div
+                                                            key={kpi}
+                                                            style={{
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'space-between',
+                                                                padding: '4px 8px',
+                                                                fontSize: '12px'
+                                                            }}
+                                                        >
+                                                            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                                <span style={{ color: '#374151', fontWeight: '500' }}>
+                                                                    {kpiLabels[kpi]}:
+                                                                </span>
+                                                                {rank && getMedalComponent(rank)}
+                                                            </div>
+                                                            <span style={{ fontWeight: 'bold', color: '#111827' }}>
+                                                                {value}
+                                                            </span>
+                                                        </div>
+                                                    );
+                                                })}
+                                                {/* Total de actividad comercial */}
+                                                <div style={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'space-between',
+                                                    padding: '4px 8px',
+                                                    fontSize: '12px',
+                                                    borderTop: '1px solid #E5E7EB',
+                                                    marginTop: '8px',
+                                                    paddingTop: '8px'
+                                                }}>
+                                                    <span style={{ color: '#1D4ED8', fontWeight: 'bold' }}>
+                                                        Total Actividad:
+                                                    </span>
+                                                    <span style={{ fontWeight: 'bold', color: '#1E3A8A' }}>
+                                                        {Object.values(seller.kpis).reduce((sum, value) => sum + value, 0)}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Medallero del Mes */}
+                                <div style={{
+                                    marginTop: '32px',
+                                    background: 'white',
+                                    borderRadius: '8px',
+                                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+                                    padding: '24px'
+                                }}>
+                                    <h2 style={{
+                                        fontSize: '20px',
+                                        fontWeight: 'bold',
+                                        background: 'linear-gradient(to right, #D97706, #F59E0B)',
+                                        WebkitBackgroundClip: 'text',
+                                        WebkitTextFillColor: 'transparent',
+                                        marginBottom: '16px'
+                                    }}>
+                                        🏆 Medallero del Mes - {selectedMonth} 🏆
+                                    </h2>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                        {currentData
+                                            .map(seller => {
+                                                const goldCount = Object.keys(seller.kpis).filter(kpi => getRankings(currentData, kpi)[seller.id] === 1).length;
+                                                const silverCount = Object.keys(seller.kpis).filter(kpi => getRankings(currentData, kpi)[seller.id] === 2).length;
+                                                const bronzeCount = Object.keys(seller.kpis).filter(kpi => getRankings(currentData, kpi)[seller.id] === 3).length;
+                                                const totalActivity = Object.values(seller.kpis).reduce((sum, value) => sum + value, 0);
+                                                
+                                                return {
+                                                    ...seller,
+                                                    goldCount,
+                                                    silverCount,
+                                                    bronzeCount,
+                                                    totalActivity,
+                                                    totalMedals: goldCount + silverCount + bronzeCount
+                                                };
+                                            })
+                                            .sort((a, b) => {
+                                                if (a.goldCount !== b.goldCount) return b.goldCount - a.goldCount;
+                                                if (a.silverCount !== b.silverCount) return b.silverCount - a.silverCount;
+                                                if (a.bronzeCount !== b.bronzeCount) return b.bronzeCount - a.bronzeCount;
+                                                return b.totalActivity - a.totalActivity;
+                                            })
+                                            .map((seller, index) => (
+                                                <div
+                                                    key={seller.id}
+                                                    style={{
+                                                        padding: '16px',
+                                                        borderRadius: '8px',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'space-between',
+                                                        background: index === 0 ? '#FEF3C7' :
+                                                                   index === 1 ? '#F9FAFB' :
+                                                                   index === 2 ? '#FED7AA' :
+                                                                   '#F9FAFB',
+                                                        border: index === 0 ? '2px solid #F59E0B' :
+                                                               index === 1 ? '2px solid #E5E7EB' :
+                                                               index === 2 ? '2px solid #F59E0B' :
+                                                               '1px solid #E5E7EB'
+                                                    }}
+                                                >
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                                                        <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#6B7280' }}>
+                                                            #{index + 1}
+                                                        </div>
+                                                        <div style={{
+                                                            width: '40px',
+                                                            height: '40px',
+                                                            borderRadius: '50%',
+                                                            background: '#E5E7EB',
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'center',
+                                                            fontSize: '24px'
+                                                        }}>
+                                                            {getAvatar(seller.name)}
+                                                        </div>
+                                                        <div>
+                                                            <span style={{ fontWeight: 'bold', color: '#111827' }}>
+                                                                {seller.name}
+                                                            </span>
+                                                            <div style={{ fontSize: '14px', color: '#6B7280' }}>
+                                                                Actividad del mes: {seller.totalActivity}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                                                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                            <span style={{ fontSize: '20px' }}>🏆</span>
+                                                            <span style={{ fontWeight: 'bold', fontSize: '18px' }}>
+                                                                {seller.goldCount}
+                                                            </span>
+                                                        </div>
+                                                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                            <span style={{ fontSize: '20px' }}>🥈</span>
+                                                            <span style={{ fontWeight: 'bold', fontSize: '18px' }}>
+                                                                {seller.silverCount}
+                                                            </span>
+                                                        </div>
+                                                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                            <span style={{ fontSize: '20px' }}>🥉</span>
+                                                            <span style={{ fontWeight: 'bold', fontSize: '18px' }}>
+                                                                {seller.bronzeCount}
+                                                            </span>
+                                                        </div>
+                                                        <div style={{ marginLeft: '16px', fontSize: '14px', color: '#6B7280' }}>
+                                                            Total: {seller.totalMedals}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        // Renderizar la aplicación
+        ReactDOM.render(<SalesDashboard />, document.getElementById('root'));
+    </script>
+</body>
+</html>
